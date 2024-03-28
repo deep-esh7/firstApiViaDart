@@ -4,7 +4,7 @@ class Constants {
   final db = Firestore.instance;
   String? didNumber;
   String? callerNumber;
-  String? companyID;
+ String? companyID;
 
   String? empID;
   String? empDesignation;
@@ -14,5 +14,13 @@ class Constants {
   String? empPhoneno;
 String? callStartStamp;
 String? CIUD;
+String? baseID;
+    List agentNumbers = [];
+    var tokenformainapi = "hello";
+    String? answeredAgentNo;
+    String? recordingLink;
+    String? callduration;
+    String? endTime;
+    String? callDirection;
 
 }

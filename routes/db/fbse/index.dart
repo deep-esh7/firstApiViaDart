@@ -1,10 +1,17 @@
 import 'dart:async';
+
 import 'dart:io';
 import 'package:firedart/firedart.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:first_api/utis/constants.dart';
 
+import '../../../createCallCollection/controller.dart';
+import '../../../createCallCollection/models.dart';
+
 var constant = Constants();
+
+var mainres;
+
 Future<Response> onRequest(RequestContext context) async {
   // TODO: implement route handler
   switch (context.request.method) {
@@ -26,7 +33,7 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> fetchCompanyID(RequestContext context) async {
   //checking token
-  if ((context.request.headers['authorization'] != "hello")) {
+  if (context.request.headers['authorization'].toString() != constant.tokenformainapi.toString()) {
     return Response(statusCode: HttpStatus.forbidden);
   }
 
@@ -56,13 +63,23 @@ Future<Response> fetchCompanyID(RequestContext context) async {
   return checkLeadExists(context);
 }
 
+
+
+
+
+
+
+
+
+
+
 // check lead exists or not
 
 Future<Response> checkLeadExists(
   RequestContext context,
 ) async {
-  var res;
-  unawaited(await constant.db
+
+await constant.db
       .collection("Companies")
       .document(constant.companyID!)
       .collection("leads")
@@ -75,6 +92,7 @@ Future<Response> checkLeadExists(
         constant.empID = value[0]["owner"]["id"] as String;
         constant.empName = value[0]["owner"]["name"] as String;
         constant.empDesignation = value[0]["owner"]["designation"] as String;
+        constant.baseID = value[0]["id"] as String;
 
         await constant.db
             .collection("Companies")
@@ -89,38 +107,200 @@ Future<Response> checkLeadExists(
           // now we have extracted the emp phone no and status for exisiting lead
 
           if (constant.empStatus == "available") {
-            List agentNumbers = [];
-
-            agentNumbers.add(constant.empPhoneno);
+            constant.agentNumbers.add(constant.empPhoneno);
 
             var resMap = [
               {
-                "transfer": {"type": "number", "data": agentNumbers}
+                "transfer": {"type": "number", "data": constant.agentNumbers}
               }
             ];
+            CallRecord callrecord = CallRecord();
+            CreateCallCollection callDetails = CreateCallCollection(
+                companyID: constant.companyID,
+                cuid: constant.CIUD,
+                callerDid: constant.didNumber,
+                callerNumber: constant.callerNumber,
+                agentDid: "",
+                callStartStamp: constant.callStartStamp,
+                recordingLink: "",
+                agentid: constant.empID,
+                callStatus: "Started",
+                callTranfer: false,
+                callTransferIds: [],
+                department: "Sales",
+                isNewLeadCall: false,
+                baseID: constant.baseID,
+                isSmsSent: false,
+                callDateTime: DateTime.now().toString(),
+                advertisedNumber: false,
+                callDirection: "UsertoAgent");
 
-            print("adsd");
+            callrecord.addCallRecord(callDetails);
 
-            res = resMap;
+            mainres = resMap;
           } else {
-            List agentNumbers = [];
-            agentNumbers.add("11111");
+                constant.agentNumbers.add("11111");
 
-            res = agentNumbers;
+            // res = constant.agentNumbers;
+
             var resMap = [
               {
-                "transfer": {"type": "number", "data": agentNumbers}
+                "transfer": {"type": "number", "data": constant.agentNumbers}
               }
             ];
+            mainres = resMap;
           }
-        });
-      } else {
-//this means leads doesnt exists
+        
+          
+            
+    });
+} else {
+  mainres=null;
 
-        print(value);
-      }
-    },
-  ));
 
-  return Response.json(body: res);
+
 }
+});
+
+
+  return leadNotExists(context);
+}
+
+
+
+
+
+
+
+
+
+// lead not exists 
+
+Future<Response> leadNotExists(RequestContext context) async {
+
+if(mainres!=null)
+{
+   return  Response.json(body: mainres);
+}
+
+
+
+      
+ {
+        // if lead not exists fetch didnumbers under conversations and then telephony
+
+        await constant.db
+            .collection("Companies")
+            .document(constant.companyID!)
+            .collection("conversations")
+            .document("telephony")
+            .collection("telephony")
+            .document(constant.didNumber!)
+            .get()
+            .then((value) async => {
+                  //after fetching details of did allocation we need to fetch all agents available for executing conditions like round robin or simantaneous for connecting to the non existing lead
+
+                  await constant.db
+                      .collection("Companies")
+                      .document(constant.companyID!)
+                      .collection("conversations")
+                      .document("telephony")
+                      .collection("telephony")
+                      .document("conditions")
+                      .collection("conditions")
+                      .document(value.map["departmentname"].toString() +
+                          "," +
+                          value.map["projectId"].toString())
+                      .get()
+                      .then((value2) async {
+                    if (value2["callingAlgorithm"].toString() ==
+                        "ROUND_ROBIN") {
+               
+                      var agentNumbers;
+                      for (int i = 0;
+                          i < int.parse(value2.map["agents"].length.toString());
+                          i++) {
+                        await constant.db
+                            .collection("Companies")
+                            .document(constant.companyID!)
+                            .collection("Employees")
+                            .document(
+                                value2.map["agents"]["$i"]["id"].toString())
+                            .get()
+                            .then((value) {
+                          if (value.map["status"].toString() == "available") {
+                            constant.agentNumbers
+                                .add(value.map["phoneNo"].toString());
+                         
+                          }
+                        });
+                      }
+
+
+
+                      var resMap = [
+                        {
+                          "transfer": {
+                            "type": "number",
+                            "ring_type": "order_by",
+                            "data": constant.agentNumbers
+                          }
+                        }
+                      ];
+                      mainres = resMap;
+                      constant.agentNumbers = [];
+
+
+/// swapping now as the condtion is roundrobin
+                        CallRecord callrecord = CallRecord();
+                       callrecord.updateAgentMap(value2.map["agents"] as Map<String,dynamic>, constant.companyID!, value.map["departmentname"].toString() +
+                          "," +
+                          value.map["projectId"].toString());
+                     
+                    } else {
+                      for (int i = 0;
+                          i < int.parse(value2.map["agents"].length.toString());
+                          i++) {
+                        await constant.db
+                            .collection("Companies")
+                            .document(constant.companyID!)
+                            .collection("Employees")
+                            .document(
+                                value2.map["agents"]["$i"]["id"].toString())
+                            .get()
+                            .then((value) {
+                          if (value.map["status"].toString() == "available") {
+                            constant.agentNumbers
+                                .add(value.map["phoneNo"].toString());
+                            print(constant.agentNumbers.toString());
+                          }
+                        });
+                      }
+
+
+
+                      var resMap = [
+                        {
+                          "transfer": {
+                            "type": "number",
+                            "ring_type": "simantaneous",
+                            "data": constant.agentNumbers
+                          }
+                        }
+                      ];
+                      mainres = resMap;
+                      constant.agentNumbers = [];
+                    }
+                  })
+                });
+      }
+      return  Response.json(body: mainres);
+
+}
+
+
+
+
+
+
+

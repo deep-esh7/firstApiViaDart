@@ -1,10 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
 
 class CreateCallCollection {
-  String? ucid;
+  String? companyID;
+  String? cuid;
   String? callerDid;
   String? callerNumber;
   String? agentDid;
@@ -21,8 +23,12 @@ class CreateCallCollection {
   String? callDateTime;
   bool? advertisedNumber;
   String? callDirection;
+  String? endStamp;
+  String? duration;
+  String? source;
   CreateCallCollection({
-    this.ucid,
+    this.companyID,
+    this.cuid,
     this.callerDid,
     this.callerNumber,
     this.agentDid,
@@ -39,10 +45,14 @@ class CreateCallCollection {
     this.callDateTime,
     this.advertisedNumber,
     this.callDirection,
+    this.endStamp,
+    this.duration,
+    this.source,
   });
 
   CreateCallCollection copyWith({
-    String? ucid,
+    String? companyID,
+    String? cuid,
     String? callerDid,
     String? callerNumber,
     String? agentDid,
@@ -59,9 +69,13 @@ class CreateCallCollection {
     String? callDateTime,
     bool? advertisedNumber,
     String? callDirection,
+    String? endStamp,
+    String? duration,
+    String? source,
   }) {
     return CreateCallCollection(
-      ucid: ucid ?? this.ucid,
+      companyID: companyID ?? this.companyID,
+      cuid: cuid ?? this.cuid,
       callerDid: callerDid ?? this.callerDid,
       callerNumber: callerNumber ?? this.callerNumber,
       agentDid: agentDid ?? this.agentDid,
@@ -78,12 +92,16 @@ class CreateCallCollection {
       callDateTime: callDateTime ?? this.callDateTime,
       advertisedNumber: advertisedNumber ?? this.advertisedNumber,
       callDirection: callDirection ?? this.callDirection,
+      endStamp: endStamp ?? this.endStamp,
+      duration: duration ?? this.duration,
+      source: source ?? this.source,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'ucid': ucid,
+      'companyID': companyID,
+      'cuid': cuid,
       'callerDid': callerDid,
       'callerNumber': callerNumber,
       'agentDid': agentDid,
@@ -100,12 +118,16 @@ class CreateCallCollection {
       'callDateTime': callDateTime,
       'advertisedNumber': advertisedNumber,
       'callDirection': callDirection,
+      'endStamp': endStamp,
+      'duration': duration,
+      'source': source,
     };
   }
 
   factory CreateCallCollection.fromMap(Map<String, dynamic> map) {
     return CreateCallCollection(
-      ucid: map['ucid'] != null ? map['ucid'] as String : null,
+      companyID: map['companyID'] != null ? map['companyID'] as String : null,
+      cuid: map['cuid'] != null ? map['cuid'] as String : null,
       callerDid: map['callerDid'] != null ? map['callerDid'] as String : null,
       callerNumber: map['callerNumber'] != null ? map['callerNumber'] as String : null,
       agentDid: map['agentDid'] != null ? map['agentDid'] as String : null,
@@ -114,7 +136,7 @@ class CreateCallCollection {
       agentid: map['agentid'] != null ? map['agentid'] as String : null,
       callStatus: map['callStatus'] != null ? map['callStatus'] as String : null,
       callTranfer: map['callTranfer'] != null ? map['callTranfer'] as bool : null,
-      callTransferIds: map['callTransferIds'] != null ? List<String>.from((map['callTransferIds'] as List<String>) : null,
+      callTransferIds: map['callTransferIds'] != null ? List<String>.from((map['callTransferIds'] as List<String>) ): null,
       department: map['department'] != null ? map['department'] as String : null,
       isNewLeadCall: map['isNewLeadCall'] != null ? map['isNewLeadCall'] as bool : null,
       baseID: map['baseID'] != null ? map['baseID'] as String : null,
@@ -122,6 +144,9 @@ class CreateCallCollection {
       callDateTime: map['callDateTime'] != null ? map['callDateTime'] as String : null,
       advertisedNumber: map['advertisedNumber'] != null ? map['advertisedNumber'] as bool : null,
       callDirection: map['callDirection'] != null ? map['callDirection'] as String : null,
+      endStamp: map['endStamp'] != null ? map['endStamp'] as String : null,
+      duration: map['duration'] != null ? map['duration'] as String : null,
+      source: map['source'] != null ? map['source'] as String : null,
     );
   }
 
@@ -131,7 +156,7 @@ class CreateCallCollection {
 
   @override
   String toString() {
-    return 'CreateCallCollection(ucid: $ucid, callerDid: $callerDid, callerNumber: $callerNumber, agentDid: $agentDid, callStartStamp: $callStartStamp, recordingLink: $recordingLink, agentid: $agentid, callStatus: $callStatus, callTranfer: $callTranfer, callTransferIds: $callTransferIds, department: $department, isNewLeadCall: $isNewLeadCall, baseID: $baseID, isSmsSent: $isSmsSent, callDateTime: $callDateTime, advertisedNumber: $advertisedNumber, callDirection: $callDirection)';
+    return 'CreateCallCollection(companyID: $companyID, cuid: $cuid, callerDid: $callerDid, callerNumber: $callerNumber, agentDid: $agentDid, callStartStamp: $callStartStamp, recordingLink: $recordingLink, agentid: $agentid, callStatus: $callStatus, callTranfer: $callTranfer, callTransferIds: $callTransferIds, department: $department, isNewLeadCall: $isNewLeadCall, baseID: $baseID, isSmsSent: $isSmsSent, callDateTime: $callDateTime, advertisedNumber: $advertisedNumber, callDirection: $callDirection, endStamp: $endStamp, duration: $duration, source: $source)';
   }
 
   @override
@@ -140,7 +165,8 @@ class CreateCallCollection {
     final listEquals = const DeepCollectionEquality().equals;
   
     return 
-      other.ucid == ucid &&
+      other.companyID == companyID &&
+      other.cuid == cuid &&
       other.callerDid == callerDid &&
       other.callerNumber == callerNumber &&
       other.agentDid == agentDid &&
@@ -156,12 +182,16 @@ class CreateCallCollection {
       other.isSmsSent == isSmsSent &&
       other.callDateTime == callDateTime &&
       other.advertisedNumber == advertisedNumber &&
-      other.callDirection == callDirection;
+      other.callDirection == callDirection &&
+      other.endStamp == endStamp &&
+      other.duration == duration &&
+      other.source == source;
   }
 
   @override
   int get hashCode {
-    return ucid.hashCode ^
+    return companyID.hashCode ^
+      cuid.hashCode ^
       callerDid.hashCode ^
       callerNumber.hashCode ^
       agentDid.hashCode ^
@@ -177,6 +207,9 @@ class CreateCallCollection {
       isSmsSent.hashCode ^
       callDateTime.hashCode ^
       advertisedNumber.hashCode ^
-      callDirection.hashCode;
+      callDirection.hashCode ^
+      endStamp.hashCode ^
+      duration.hashCode ^
+      source.hashCode;
   }
 }
