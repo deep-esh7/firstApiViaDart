@@ -90,7 +90,7 @@ var storagePath= "Companies/$companyId/CallRecordingCollection/$callId";
       // Get the download URL of the uploaded file
       await ref.getDownloadURL().then((value) async {
 
-          c.db.collection("Comapnies").document(companyId).collection("conversations").document("telephony").collection("call collection").document(callId).update({
+          c.db.collection("Comapanies").document(companyId).collection("conversations").document("telephony").collection("call collection").document(callId).update({
 "recordingLink":value.toString()
 
           });
