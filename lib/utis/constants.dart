@@ -22,5 +22,14 @@ String? baseID;
     String? callduration;
     String? endTime;
     String? callDirection;
+    String? ivrId;
+    String? ivrName;
+    String? department;
+    String? callStatus;
+    String? callAnsweredStamp;
+    String? callEndStamp;
+    String? hangUpCause;
+    bool? isNewLeadCall;
+    
 
 }

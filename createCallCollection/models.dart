@@ -26,6 +26,15 @@ class CreateCallCollection {
   String? endStamp;
   String? duration;
   String? source;
+  String? ivrName;
+  String? ivrId;
+  String? agentPhoneNo;
+  String? agentName;
+  String? agentDesignation;
+  String? callEndStamp;
+  String? callAnswerStamp;
+  String? hangUpCause;
+      String? currentCallStatus;
   CreateCallCollection({
     this.companyID,
     this.cuid,
@@ -48,6 +57,15 @@ class CreateCallCollection {
     this.endStamp,
     this.duration,
     this.source,
+    this.ivrName,
+    this.ivrId,
+    this.agentPhoneNo,
+    this.agentName,
+    this.agentDesignation,
+    this.callEndStamp,
+    this.callAnswerStamp,
+    this.hangUpCause,
+    this.currentCallStatus,
   });
 
   CreateCallCollection copyWith({
@@ -72,6 +90,15 @@ class CreateCallCollection {
     String? endStamp,
     String? duration,
     String? source,
+    String? ivrName,
+    String? ivrId,
+    String? agentPhoneNo,
+    String? agentName,
+    String? agentDesignation,
+    String? callEndStamp,
+    String? callAnswerStamp,
+    String? hangUpCause,
+    String? currentCallStatus,
   }) {
     return CreateCallCollection(
       companyID: companyID ?? this.companyID,
@@ -95,6 +122,15 @@ class CreateCallCollection {
       endStamp: endStamp ?? this.endStamp,
       duration: duration ?? this.duration,
       source: source ?? this.source,
+      ivrName: ivrName ?? this.ivrName,
+      ivrId: ivrId ?? this.ivrId,
+      agentPhoneNo: agentPhoneNo ?? this.agentPhoneNo,
+      agentName: agentName ?? this.agentName,
+      agentDesignation: agentDesignation ?? this.agentDesignation,
+      callEndStamp: callEndStamp ?? this.callEndStamp,
+      callAnswerStamp: callAnswerStamp ?? this.callAnswerStamp,
+      hangUpCause: hangUpCause ?? this.hangUpCause,
+      currentCallStatus: currentCallStatus ?? this.currentCallStatus,
     );
   }
 
@@ -121,6 +157,15 @@ class CreateCallCollection {
       'endStamp': endStamp,
       'duration': duration,
       'source': source,
+      'ivrName': ivrName,
+      'ivrId': ivrId,
+      'agentPhoneNo': agentPhoneNo,
+      'agentName': agentName,
+      'agentDesignation': agentDesignation,
+      'callEndStamp': callEndStamp,
+      'callAnswerStamp': callAnswerStamp,
+      'hangUpCause': hangUpCause,
+      'currentCallStatus': currentCallStatus,
     };
   }
 
@@ -136,7 +181,7 @@ class CreateCallCollection {
       agentid: map['agentid'] != null ? map['agentid'] as String : null,
       callStatus: map['callStatus'] != null ? map['callStatus'] as String : null,
       callTranfer: map['callTranfer'] != null ? map['callTranfer'] as bool : null,
-      callTransferIds: map['callTransferIds'] != null ? List<String>.from((map['callTransferIds'] as List<String>) ): null,
+      callTransferIds: map['callTransferIds'] != null ? List<String>.from((map['callTransferIds'] as List<String>)) : null,
       department: map['department'] != null ? map['department'] as String : null,
       isNewLeadCall: map['isNewLeadCall'] != null ? map['isNewLeadCall'] as bool : null,
       baseID: map['baseID'] != null ? map['baseID'] as String : null,
@@ -147,6 +192,15 @@ class CreateCallCollection {
       endStamp: map['endStamp'] != null ? map['endStamp'] as String : null,
       duration: map['duration'] != null ? map['duration'] as String : null,
       source: map['source'] != null ? map['source'] as String : null,
+      ivrName: map['ivrName'] != null ? map['ivrName'] as String : null,
+      ivrId: map['ivrId'] != null ? map['ivrId'] as String : null,
+      agentPhoneNo: map['agentPhoneNo'] != null ? map['agentPhoneNo'] as String : null,
+      agentName: map['agentName'] != null ? map['agentName'] as String : null,
+      agentDesignation: map['agentDesignation'] != null ? map['agentDesignation'] as String : null,
+      callEndStamp: map['callEndStamp'] != null ? map['callEndStamp'] as String : null,
+      callAnswerStamp: map['callAnswerStamp'] != null ? map['callAnswerStamp'] as String : null,
+      hangUpCause: map['hangUpCause'] != null ? map['hangUpCause'] as String : null,
+      currentCallStatus: map['currentCallStatus'] != null ? map['currentCallStatus'] as String : null,
     );
   }
 
@@ -156,7 +210,7 @@ class CreateCallCollection {
 
   @override
   String toString() {
-    return 'CreateCallCollection(companyID: $companyID, cuid: $cuid, callerDid: $callerDid, callerNumber: $callerNumber, agentDid: $agentDid, callStartStamp: $callStartStamp, recordingLink: $recordingLink, agentid: $agentid, callStatus: $callStatus, callTranfer: $callTranfer, callTransferIds: $callTransferIds, department: $department, isNewLeadCall: $isNewLeadCall, baseID: $baseID, isSmsSent: $isSmsSent, callDateTime: $callDateTime, advertisedNumber: $advertisedNumber, callDirection: $callDirection, endStamp: $endStamp, duration: $duration, source: $source)';
+    return 'CreateCallCollection(companyID: $companyID, cuid: $cuid, callerDid: $callerDid, callerNumber: $callerNumber, agentDid: $agentDid, callStartStamp: $callStartStamp, recordingLink: $recordingLink, agentid: $agentid, callStatus: $callStatus, callTranfer: $callTranfer, callTransferIds: $callTransferIds, department: $department, isNewLeadCall: $isNewLeadCall, baseID: $baseID, isSmsSent: $isSmsSent, callDateTime: $callDateTime, advertisedNumber: $advertisedNumber, callDirection: $callDirection, endStamp: $endStamp, duration: $duration, source: $source, ivrName: $ivrName, ivrId: $ivrId, agentPhoneNo: $agentPhoneNo, agentName: $agentName, agentDesignation: $agentDesignation, callEndStamp: $callEndStamp, callAnswerStamp: $callAnswerStamp, hangUpCause: $hangUpCause, currentCallStatus: $currentCallStatus)';
   }
 
   @override
@@ -185,7 +239,16 @@ class CreateCallCollection {
       other.callDirection == callDirection &&
       other.endStamp == endStamp &&
       other.duration == duration &&
-      other.source == source;
+      other.source == source &&
+      other.ivrName == ivrName &&
+      other.ivrId == ivrId &&
+      other.agentPhoneNo == agentPhoneNo &&
+      other.agentName == agentName &&
+      other.agentDesignation == agentDesignation &&
+      other.callEndStamp == callEndStamp &&
+      other.callAnswerStamp == callAnswerStamp &&
+      other.hangUpCause == hangUpCause &&
+      other.currentCallStatus == currentCallStatus;
   }
 
   @override
@@ -210,6 +273,15 @@ class CreateCallCollection {
       callDirection.hashCode ^
       endStamp.hashCode ^
       duration.hashCode ^
-      source.hashCode;
+      source.hashCode ^
+      ivrName.hashCode ^
+      ivrId.hashCode ^
+      agentPhoneNo.hashCode ^
+      agentName.hashCode ^
+      agentDesignation.hashCode ^
+      callEndStamp.hashCode ^
+      callAnswerStamp.hashCode ^
+      hangUpCause.hashCode ^
+      currentCallStatus.hashCode;
   }
-}
+      }

@@ -1,15 +1,18 @@
 import 'dart:io';
 
-import 'package:firedart/firedart.dart';
-import 'package:firedart/firedart.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:first_api/utis/constants.dart';
 
 import '../../../../createCallCollection/controller.dart';
 import '../../../../createCallCollection/models.dart';
-import '../index.dart';
+import '../../../../createLeads/controller.dart';
+import '../../../../createLeads/leadModel.dart';
+import '../../../../createLeads/leadOwnerModel.dart';
+import '../../../../createLeads/leadPersonalDetailsModel.dart';
 
 Constants constant = Constants();
+
+
 Future<Response> onRequest(RequestContext context) async {
   // TODO: implement route handler
   switch (context.request.method) {
@@ -36,18 +39,22 @@ Future<Response> fetchCompanyID(RequestContext context) async {
   //start process
 
   final body = await context.request.json() as Map<String, dynamic>;
-print(body.toString());
-
-  constant.didNumber = body["call_to_number"] as String;
-
-  constant.callduration = body["duration"] as String;
-  constant.endTime = body["end_stamp"] as String;
-  constant.callDirection = body["direction"] as String;
 
   constant.CIUD = body["uuid"] as String;
+  constant.didNumber = body["call_to_number"] as String;
+  constant.callerNumber = body["customer_no_with_prefix "] as String;
   constant.callStartStamp = body["start_stamp"] as String;
+    constant.callAnsweredStamp = body["answer_stamp"] as String;
+    constant.callEndStamp=body["end_stamp"] as String;
+        constant.hangUpCause = body["hangup_cause"] as String;
+           constant.callDirection = body["direction"] as String;
+           constant.callduration=body["duration"] as String;
+             constant.answeredAgentNo = body["answer_agent_number"] as String;
+            constant.recordingLink = body["recording_url"] as String;
+               constant.callStatus = body["call_status"] as String;
 
 
+  print(body.toString());
   await constant.db
       .collection("masterCollection")
       .document("didNumbers")
@@ -73,35 +80,105 @@ print(body.toString());
     },
   );
 
-  return fetchWebhookOnHangUp(context);
+  return createLead(context);
 }
 
-Future<Response> fetchWebhookOnHangUp(RequestContext context) async {
-  CallRecord callRecord = CallRecord();
+Future<Response> createLead(RequestContext context) async {
+  var leadId = DateTime.now().millisecondsSinceEpoch.toString();
+  constant.baseID = leadId;
+
+  LeadStatusType statusType = LeadStatusType();
+  LeadPersonalDetails leadPersonalDetails = LeadPersonalDetails(
+    name: "",
+    mobileNo: constant.callerNumber!,
+  );
+  // LeadOwner leadOwnerData = LeadOwner(
+  //     name: constant.empName!,
+  //     id: constant.empID!,
+  //     designation: constant.empDesignation!);
+
+  Lead leadData = Lead(
+      companyId: constant.companyID,
+      id: leadId,
+      source: "Newspaper",
+      status: "Fresh",
+      subStatus: "",
+      hotLead: false,
+      createdOn: DateTime.now(),
+      leadStatusType: LeadStatusType.FRESH,
+      personalDetails: leadPersonalDetails,
+      subsource: "",
+      );
+
+  LeadsSection leadsSection = LeadsSection();
+
+
+
+await constant.db
+      .collection("Companies")
+      .document(constant.companyID!)
+      .collection("leads")
+      .where("personalDetails.mobileNo", isEqualTo: constant.callerNumber)
+      .get()
+      .then(
+    (value) async {
+      if (value.toString() == "[]") {
+
+constant.isNewLeadCall=true;
+  leadsSection.addLead(leadData);
+
+      }});
+
+
+  return createCallDetails(context);
+}
+
+Future<Response> createCallDetails(RequestContext context) async {
+  final body = await context.request.json() as Map<String, dynamic>;
+
+  CallRecord callrecord = CallRecord();
 
   CreateCallCollection callDetails = CreateCallCollection(
       companyID: constant.companyID,
+      duration: constant.callduration,
+      source: "Sales",
+      endStamp: constant.callEndStamp,
+      ivrId: "",
+      ivrName: "",
+      agentPhoneNo: constant.empPhoneno,
+      agentName: constant.empName,
+      agentDesignation: constant.empDesignation,
       cuid: constant.CIUD,
       callerDid: constant.didNumber,
-
+      callerNumber: constant.callerNumber,
       agentDid: constant.didNumber,
       callStartStamp: constant.callStartStamp,
+      callAnswerStamp: constant.callAnsweredStamp,
+      callEndStamp: constant.callEndStamp,
+      hangUpCause: constant.hangUpCause,
       recordingLink: constant.recordingLink,
       agentid: constant.empID,
-      callStatus: "Ended",
+      callStatus: constant.callStatus,
       callTranfer: false,
       callTransferIds: [],
       department: "Sales",
-      isNewLeadCall: false,
+      isNewLeadCall: constant.isNewLeadCall,
       baseID: constant.baseID,
-  
-    
+      isSmsSent: false,
+      callDateTime: DateTime.now().toString(),
       advertisedNumber: false,
-      callDirection: constant.callDirection,
-      duration: constant.callduration,
-      endStamp: constant.endTime);
+      callDirection:constant.callDirection,
+      currentCallStatus: "Ended");
 
-  callRecord.updateCallRecord(callDetails);
 
-  return Response.json(body: "Done");
+      
+if(constant.callStatus=="answered")
+{
+  callrecord.updateCallRecord(callDetails);
+} else {
+
+   callrecord.addCallRecord(callDetails);
+}
+
+  return Response.json(body: "done");
 }

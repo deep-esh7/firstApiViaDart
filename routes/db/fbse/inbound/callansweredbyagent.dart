@@ -40,11 +40,13 @@ Future<Response> fetchCompanyID(RequestContext context) async {
   final body = await context.request.json() as Map<String, dynamic>;
 
   constant.didNumber = body["call_to_number"] as String;
-  constant.callerNumber = body["customer_no_with_prefix"] as String;
+  constant.callerNumber = body["customer_no_with_prefix "] as String;
 
   constant.CIUD = body["uuid"] as String;
   constant.callStartStamp = body["start_stamp"] as String;
   constant.answeredAgentNo = body["answer_agent_number"] as String;
+    constant.answeredAgentNo = body["call_direction"] as String;
+    constant.callStatus= body["call_status"] as String;
   print(body.toString());
   await constant.db
       .collection("masterCollection")
@@ -103,7 +105,23 @@ Future<Response> createLead(RequestContext context) async {
 
   LeadsSection leadsSection = LeadsSection();
 
+
+
+await constant.db
+      .collection("Companies")
+      .document(constant.companyID!)
+      .collection("leads")
+      .where("personalDetails.mobileNo", isEqualTo: constant.callerNumber)
+      .get()
+      .then(
+    (value) async {
+      if (value.toString() == "[]") {
+
+constant.isNewLeadCall=true;
   leadsSection.addLead(leadData);
+
+      }});
+
 
   return createCallDetails(context);
 }
@@ -115,6 +133,15 @@ Future<Response> createCallDetails(RequestContext context) async {
 
   CreateCallCollection callDetails = CreateCallCollection(
       companyID: constant.companyID,
+      duration: "",
+      source: "Newspaper",
+      endStamp: "",
+      ivrId: "",
+      ivrName: "",
+      agentPhoneNo: constant.empPhoneno,
+      agentName: constant.empName,
+      agentDesignation: constant.empDesignation,
+
       cuid: constant.CIUD,
       callerDid: constant.didNumber,
       callerNumber: constant.callerNumber,
@@ -122,16 +149,20 @@ Future<Response> createCallDetails(RequestContext context) async {
       callStartStamp: constant.callStartStamp,
       recordingLink: "",
       agentid: constant.empID,
-      callStatus: "Started",
+      callAnswerStamp: "",
+      callEndStamp: "",
+      currentCallStatus: "Started",
+      hangUpCause: "",
+      callStatus: constant.callStatus,
       callTranfer: false,
       callTransferIds: [],
       department: "Sales",
-      isNewLeadCall: false,
+      isNewLeadCall: constant.isNewLeadCall,
       baseID: constant.baseID,
       isSmsSent: false,
       callDateTime: DateTime.now().toString(),
       advertisedNumber: false,
-      callDirection: "UsertoAgent");
+      callDirection:constant.callDirection);
 
   callrecord.addCallRecord(callDetails);
 
