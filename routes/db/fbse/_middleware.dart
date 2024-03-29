@@ -34,9 +34,11 @@ Handler middleware(Handler handler) {
     //     .signInAnonymously();
 
     // }
-     
+         handler.use(requestLogger());
 
     final response = await handler(context);
+
     return response;
+    
   };
 }
