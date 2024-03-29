@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'dart:io';
 import 'package:firedart/firedart.dart';
@@ -131,7 +132,8 @@ Future<Response> checkLeadExists(
           // ivrName: "",);
 
           //       callrecord.addCallRecord(callDetails);
-print("Number provided to customer");
+print("Number provided to customer : "+ constant.agentNumbers.toString());
+log("Number provided to customer printing 2nd time : "+ constant.agentNumbers.toString());
           mainres = resMap;
           constant.agentNumbers = [];
         } else {
