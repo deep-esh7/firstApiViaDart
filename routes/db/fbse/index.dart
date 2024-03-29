@@ -34,10 +34,10 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> fetchCompanyID(RequestContext context) async {
   //checking token
-  if (context.request.headers['authorization'].toString() !=
-      constant.tokenformainapi.toString()) {
-    return Response(statusCode: HttpStatus.forbidden);
-  }
+  // if (context.request.headers['authorization'].toString() !=
+  //     constant.tokenformainapi.toString()) {
+  //   return Response(statusCode: HttpStatus.forbidden);
+  // }
 
   //start process
 
