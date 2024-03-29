@@ -131,10 +131,12 @@ Future<Response> checkLeadExists(
           // ivrName: "",);
 
           //       callrecord.addCallRecord(callDetails);
-
+print("Number provided to customer");
           mainres = resMap;
           constant.agentNumbers = [];
         } else {
+
+          print("agent is busy on another call provided to customer");
           CallRecord callrecord = CallRecord();
           CreateCallCollection callDetails = CreateCallCollection(
               companyID: constant.companyID,
@@ -176,7 +178,7 @@ Future<Response> checkLeadExists(
 
           var resMap = [
             {
-              "transfer": {"type": "number", "data": constant.agentNumbers}
+              "transfer": {"type": "ivr", "data": constant.agentNumbers}
             }
           ];
           mainres = resMap;
@@ -196,6 +198,7 @@ Future<Response> leadNotExists(RequestContext context) async {
   if (mainres != null) {
     return Response.json(body: mainres);
   }
+  var resMap;
 
   {
     // if lead not exists fetch didnumbers under conversations and then telephony
@@ -243,7 +246,11 @@ Future<Response> leadNotExists(RequestContext context) async {
                     });
                   }
 
-                  var resMap = [
+
+
+
+if(constant.agentNumbers.length!=0){
+  resMap = [
                     {
                       "transfer": {
                         "type": "number",
@@ -252,6 +259,57 @@ Future<Response> leadNotExists(RequestContext context) async {
                       }
                     }
                   ];
+} else {
+   print("agent is busy on another call");
+          CallRecord callrecord = CallRecord();
+          CreateCallCollection callDetails = CreateCallCollection(
+              companyID: constant.companyID,
+              cuid: constant.CIUD,
+              callerDid: constant.didNumber,
+              callerNumber: constant.callerNumber,
+              agentDid: "",
+              callStartStamp: constant.callStartStamp,
+              recordingLink: "",
+              agentid: constant.empID,
+              callStatus: "Ended By IVR",
+              callTranfer: false,
+              callTransferIds: [],
+              department: "Sales",
+              isNewLeadCall: false,
+              baseID: constant.baseID,
+              isSmsSent: false,
+              callDateTime: DateTime.now().toString(),
+              advertisedNumber: false,
+              callDirection: "inbound",
+              duration: "",
+              source: "Sales",
+              endStamp: "",
+              ivrId: "11111",
+              ivrName: "testivr",
+              agentDesignation: constant.empDesignation,
+              agentName: constant.empName,
+              agentPhoneNo: constant.empPhoneno,
+              callAnswerStamp: "",
+              callEndStamp: "",
+              currentCallStatus: "Ended",
+              hangUpCause: "Agent Busy Ended By IVR");
+
+          callrecord.addCallRecord(callDetails);
+
+          constant.agentNumbers.add("11111");
+
+          // res = constant.agentNumbers;
+
+           resMap = [
+            {
+              "transfer": {"type": "ivr", "data": constant.agentNumbers}
+            }
+          ];
+      
+}
+
+
+                 
                   mainres = resMap;
                   constant.agentNumbers = [];
 
@@ -282,7 +340,12 @@ Future<Response> leadNotExists(RequestContext context) async {
                     });
                   }
 
-                  var resMap = [
+                  
+                  
+                  
+                  
+if(constant.agentNumbers.length!=0){
+       resMap = [
                     {
                       "transfer": {
                         "type": "number",
@@ -291,6 +354,55 @@ Future<Response> leadNotExists(RequestContext context) async {
                       }
                     }
                   ];
+} else {
+   print("agent is busy on another call");
+          CallRecord callrecord = CallRecord();
+          CreateCallCollection callDetails = CreateCallCollection(
+              companyID: constant.companyID,
+              cuid: constant.CIUD,
+              callerDid: constant.didNumber,
+              callerNumber: constant.callerNumber,
+              agentDid: "",
+              callStartStamp: constant.callStartStamp,
+              recordingLink: "",
+              agentid: constant.empID,
+              callStatus: "Ended By IVR",
+              callTranfer: false,
+              callTransferIds: [],
+              department: "Sales",
+              isNewLeadCall: false,
+              baseID: constant.baseID,
+              isSmsSent: false,
+              callDateTime: DateTime.now().toString(),
+              advertisedNumber: false,
+              callDirection: "inbound",
+              duration: "",
+              source: "Sales",
+              endStamp: "",
+              ivrId: "11111",
+              ivrName: "testivr",
+              agentDesignation: constant.empDesignation,
+              agentName: constant.empName,
+              agentPhoneNo: constant.empPhoneno,
+              callAnswerStamp: "",
+              callEndStamp: "",
+              currentCallStatus: "Ended",
+              hangUpCause: "Agent Busy Ended By IVR");
+
+          callrecord.addCallRecord(callDetails);
+
+          constant.agentNumbers.add("11111");
+
+          // res = constant.agentNumbers;
+
+           resMap = [
+            {
+              "transfer": {"type": "ivr", "data": constant.agentNumbers}
+            }
+          ];
+      
+}
+                
                   mainres = resMap;
                   constant.agentNumbers = [];
                 }
